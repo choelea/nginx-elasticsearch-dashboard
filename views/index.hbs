@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CORS 测试网站</title>
+    <meta name="description" content="简单的示例让你完全掌握CORS的支持，并能从容应对CORS的任何问题">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/common.css">  
+</head>
+
+<body>
+     {{>header}}
+    <div class="container">
+    <h1> CORS 测试网站</h1>
+    <ul class="list-group">
+        <li class="list-group-item">
+            <a  href="/public-resources.html">默认可以跨域请求的资源</a> 
+            <span>查看那些请求默认是可以跨域的，哪些必须采用CORS</span>
+        </li>
+        <li class="list-group-item">
+            <a  href="/request-cors-resources.html">请求开启了CORS的资源服务</a> 
+            <span>请求开启了CORS的资源服务</span>
+        </li>
+        <li class="list-group-item">
+            <a  href="/client-without-credentials.html">不带Cookie的CORS请求测试</a> 
+            <span>此浏览记录不会记录在会话中</span>
+        </li>
+        <li class="list-group-item">
+            <a  href="/client-with-credentials.html">带Cookie的CORS请求测试</a> 
+            <span>此浏览记录会记录在会话中</span>
+        </li>
+        <li class="list-group-item">
+            <a  href="/view-history.html">查看会话记录中的浏览历史</a> 
+            <span>会话里记录的浏览历史: 只有<b>带Cookie的CORS请求测试</b>才会成功被记录</span>
+        </li>
+        <li class="list-group-item">
+            <a  href="/csrf-chembnb-logout.html">为什么有同源安全策略，还需要CSRF</a> 
+            <span></span>
+        </li>
+        
+    </ul>
+    </div>
+</body>
+
+</html>
