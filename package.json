@@ -16,7 +16,9 @@
     "hbs": "~4.0.1",
     "http-errors": "~1.6.2",
     "morgan": "~1.9.0",
-    "readline": "^1.3.0"
+    "readline": "^1.3.0",
+    "replaceall": "^0.1.6",
+    "url-pattern": "^1.0.3"
   },
   "devDependencies": {
     "nodemon": "^1.18.6"

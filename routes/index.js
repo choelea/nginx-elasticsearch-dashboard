@@ -5,9 +5,4 @@ var router = express.Router();
 router.get('/', function (req, res, next) {
   res.render('index');
 });
-
-router.get('/(:page).html', function (req, res, next) {
-  res.render('pages/'+req.params.page);
-});
-
 module.exports = router;
