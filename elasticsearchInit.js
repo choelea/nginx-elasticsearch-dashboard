@@ -68,14 +68,15 @@ function initData(){
         lineReader.on('line', function (line) {
             try{
                 var doc =JSON.parse(replaceall('\\','\\\\', line))
-                if(!doc.request_uri.startsWith("/resources") && !doc.request_uri.startsWith("/Autodiscover/Autodiscover.xml")){
+                if(!doc.request_uri.startsWith("/resources") && !doc.request_uri.startsWith("/Autodiscover/Autodiscover.xml")
+                   && !doc.request_uri.startsWith("/group-buying") && !doc.server_name.startsWith("overseas-offices")){
                     if(pdpPattern.match(doc.request_uri)){
                         doc.request_function='pdp'
                     } else {
                         doc.request_function='other'
                     }
                     doc.requestOn=doc['@timestamp']
-                    doc.request_url=doc.server_name + doc.request_uri
+                    doc.request_url=doc.request_method+'-'+doc.server_name + doc.request_uri
                     documents.push({ index: { _index: INDEX_NAME, _type: '_doc' } })
                     documents.push(doc);
                 }

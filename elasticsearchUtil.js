@@ -9,10 +9,10 @@ async function search(query) {
             type:'_doc',
             body:query
         })        
-        return body.hits
+        return body
     } catch (error) {
         console.error(error);
-        return []
+        return {}
     }
 }
 

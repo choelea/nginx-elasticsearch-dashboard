@@ -7,13 +7,29 @@ router.get('/topfunctions', function (req, res, next) {
   res.render('index');
 });
 
-router.get('/all', async function (req, res, next) {
+router.get('/topRequest', async function (req, res, next) {
   const dsl = {
-    "query": {"match_all": {}}
+    "size": 0,
+    "aggs" : {
+        "requestCount" : { "terms" : { "field" : "request_url","size":100 } }
+    }
+}
+  const result  = await es.search(dsl)
+  console.log(result.aggregations.requestCount)
+  res.render('pages/topAccess', result.aggregations.requestCount);
+});
+
+router.get('/topSlowResponse', async function (req, res, next) {
+  const dsl = {
+    "sort" : [
+          { "upstream_response_time" : {"order" : "desc"}}
+      ],
+      "size":200,
+    "query": { "match_all": {}}
+    
   }
   const result  = await es.search(dsl)
-  console.log(result)
-  res.render('pages/all', result);
+  res.render('pages/topSlowResponse', result.hits);
 });
 
 module.exports = router;

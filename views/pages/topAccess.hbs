@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>CORS With Cookies</title>
+    <title>Nginx 请求次数Top 100</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">   
     <link rel="stylesheet" href="/css/common.css">  
 </head>
@@ -10,22 +10,20 @@
 <body>
     {{>header}}
     <div class="container">
-        <h1>访问次数最都得请求</h1> <span>Total: {{total}}</span>
+        <h1>访问次数最多的请求</h1>
         <div class="row col-md-12 table-responsive">
             <table id="customerTable" class="table">
                 <thead>
                     <tr>
-                        <th>URI</th>
-                        <th>Host</th>
-                        <th>后端响应时间</th>
+                        <th>URL</th>
+                        <th>次数</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{#each hits}}
+                    {{#each buckets}}
                         <tr>
-                            <td>{{_source.request_uri}}</td>
-                            <td>{{_source.requestOn}}</td>
-                            <td>{{_source.upstream_response_time}}</td>
+                            <td>{{key}}</td>
+                            <td>{{doc_count}}</td>
                         </tr>
                     {{/each}}
                 </tbody>
