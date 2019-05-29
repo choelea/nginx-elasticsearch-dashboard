@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>指定请求明细</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">   
+    <link rel="stylesheet" href="/css/common.css"> 
+    <style>
+      .form-inline > * {
+          margin:5px 3px;
+        }
+    </style> 
+</head>
+
+<body>
+    <header class="header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-8">
+          <a href="http://tech.jiu-shu.com/" class="logo">旧书 - IT Technologies</a>
+        </div>
+        <div class="col-sm-4">
+          <form class="form-inline  pull-right" action="/log/requestHits" method="POST">
+            <div class="form-group">
+              <input type="text" class="form-control" name="size" id="size" placeholder="size" size="5" value="{{size}}" ></input>
+            </div>
+            <div class="form-group">  
+              <input type="text" class="form-control" name="url" id="url" value="{{url}}" placeholder="GET-www.okchem.com/"></input>
+            </div>
+              <button type="submit" class="btn btn-primary">
+                  Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </header>
+    <div class="container-fluid">
+        <h1>指定URL请求的明细，响应时间倒序排列</h1> <span>Total: {{list.total}}</span><span>平均响应时间：{{avgResponse}}</span>
+        <div class="row col-md-12 table-responsive">
+            <table id="customerTable" class="table">
+                <thead>
+                    <tr>
+                        <th>URI</th>
+                        <th class="text-nowrap">请求时刻</th>
+                        <th class="text-nowrap">status</th>
+                        <th class="text-nowrap">后端响应时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each list.hits}}
+                        <tr>
+                            <td class="text-nowrap">{{_source.request_url}}</td>
+                            <td class="text-nowrap" esDate="{{_source.requestOn}}"></td>
+                            <td class="text-nowrap">{{_source.status}}</td>
+                            <td class="text-nowrap">{{_source.upstream_response_time}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script  src="https://code.jquery.com/jquery-3.3.1.min.js"  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    
+    <script>
+        $(document).ready(function(){
+            $('td[esDate]').each(function () {
+                $(this).text(new Date($(this).attr('esDate')).toLocaleString());
+            })
+        });
+    </script>
+</body>
+
+</html>

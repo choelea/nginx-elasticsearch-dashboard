@@ -32,4 +32,33 @@ router.get('/topSlowResponse', async function (req, res, next) {
   res.render('pages/topSlowResponse', result.hits);
 });
 
+router.get('/requestHits', async function (req, res, next) {
+  
+  res.render('pages/requestHits', {});
+});
+
+router.post('/requestHits', async function (req, res, next) {
+  const url = req.body.url;
+  const size = req.body.size;
+  const dsl = {
+    "sort" : [
+          { "upstream_response_time" : {"order" : "desc"}}
+      ],
+    "query": {  
+      "match" : {
+              "request_url": url
+          }
+    },
+    "aggs" : {
+      "avg_response" : {  
+        "avg": {
+            "field" : "upstream_response_time"
+        }
+      }
+    },
+    size    
+  }
+  const result  = await es.search(dsl)
+  res.render('pages/requestHits', {list:result.hits,avgResponse:result.aggregations.avg_response.value, url,size});
+});
 module.exports = router;
