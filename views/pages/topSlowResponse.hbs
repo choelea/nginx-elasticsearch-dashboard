@@ -5,6 +5,12 @@
     <title>Top 200 慢响应请求</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">   
     <link rel="stylesheet" href="/css/common.css">  
+    <style>
+        .table td{
+            word-break: break-all;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -15,8 +21,8 @@
             <table id="customerTable" class="table">
                 <thead>
                     <tr>
-                        <th>URI</th>
-                        <th class="col-md-2">请求时刻</th>
+                        <th>URL</th>
+                        <th class="text-nowrap">请求时刻</th>
                         <th class="text-nowrap">后端响应时间</th>
                     </tr>
                 </thead>
@@ -24,7 +30,7 @@
                     {{#each hits}}
                         <tr>
                             <td>{{_source.request_url}}</td>
-                            <td esDate="{{_source.requestOn}}" class="col-md-2"></td>
+                            <td esDate="{{_source.requestOn}}" class="text-nowrap"></td>
                             <td>{{_source.upstream_response_time}}</td>
                         </tr>
                     {{/each}}

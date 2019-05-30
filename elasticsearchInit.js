@@ -8,6 +8,8 @@ const client = new Client({ node: 'http://localhost:9200' })
 const INDEX_NAME = "nginx-log"
 
 const pdpPattern = new UrlPattern('/product(/:code).html');
+
+var count = 0;
 async function init(){
     try{
         var result = await client.indices.exists({
@@ -47,20 +49,20 @@ async function init(){
                 }
             }) 
             
-            initData();
         }
+        initData();
     } catch(error){
         console.error(error);
     };
 }
 
 function initData(){
-    console.log(`Started indexing nginx json log into index [${INDEX_NAME}]`)
+    console.log(`Started init data into [${INDEX_NAME}]`)
         
-    var folderPath = path.join(__dirname, 'data/nginx')    
+    var folderPath = path.join(__dirname, 'data/nginx/access')    
     var fileNames = fs.readdirSync(folderPath)
     fileNames.forEach((file)=>{
-        console.log(`Started indexing nginx json log [${file}] into index [${INDEX_NAME}]`)
+        
         var lineReader = readline.createInterface({
             input: fs.createReadStream(path.join(folderPath,file))
         });
@@ -76,34 +78,63 @@ function initData(){
                         doc.request_function='other'
                     }
                     doc.requestOn=doc['@timestamp']
+                    doc.upstream_response_time=getCorrectFloat(doc.upstream_response_time) 
+                    doc.upstream_connect_time=getCorrectFloat(doc.upstream_connect_time)
+                    doc.request_time = getCorrectFloat(doc.request_time)
                     doc.request_url=doc.request_method+'-'+doc.server_name + doc.request_uri
                     documents.push({ index: { _index: INDEX_NAME, _type: '_doc' } })
                     documents.push(doc);
+                    count++;
                 }
             } catch (error){
                 console.error(`Failed to parse line json: ${line}` )
             }
         });
-        lineReader.on('close', () => {
-            bulk(documents).catch(console.log)
+        lineReader.on('close', () => {         
+            bulk(documents,file)
         });        
     })
 }
 
-async function bulk(documents) {
-    const result = await client.bulk({
-        refresh: true,
-        body: documents
-    })
-    if (result.statusCode==200) {
-        console.log('-------------Finished one bulk successfully---------------------')
-    }else{
-        console.log('-----------------bulk response begins------------------')
-        console.log(result)
-        console.log('-----------------bulk response ends------------------')        
+async function bulk(documents,file) {
+    try{
+        const result = await client.bulk({
+            refresh: true,
+            body: documents
+        })
+        if (result.statusCode==200) {
+            console.log(`-------------Finished bulk ${file} successfully: total documents: ${count}---------------------`)
+            fs.unlinkSync(path.join(__dirname, 'data/nginx/access',file))
+        }else{
+            console.log('-----------------bulk response begins------------------')
+            console.log(result)
+            console.log('-----------------bulk response ends------------------')        
+        }
+    }catch(error){
+        console.error(`Failed to bulk bulk ${file}------------`)
     }
 }
   
-  
+function getCorrectFloat(str){//https://docs.nginx.com/nginx/admin-guide/monitoring/logging/
+    if(Number.isNaN(str)){
+        if(str==='-'){
+            str=0
+        }else if(str.split(',').length>1){
+            str = str.split(',').reduce(getSum,0.0)            
+        }else if(str.split(';').length>1){
+            str = str.split(';').reduce(getSum,0.0)
+        }
+        else if(str.split(' ').length>1){
+            str = str.split(' ').reduce(getSum,0.0)
+        }else if(Number.isNaN(str)){
+            console.log(str)
+            str = 0;
+        }
+    }
+    return parseFloat(str)
+}
+function getSum(total,current){
+    return parseFloat(current.trim())+total
+}
 module.exports = init;
 
