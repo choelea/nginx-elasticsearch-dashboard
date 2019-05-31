@@ -11,7 +11,7 @@ router.get('/topRequest', async function (req, res, next) {
   const dsl = {
     "size": 0,
     "aggs" : {
-        "requestCount" : { "terms" : { "field" : "request_url","size":100 } }
+        "requestCount" : { "terms" : { "field" : "request_url","size":1000 } }
     }
 }
   const result  = await es.search(dsl)

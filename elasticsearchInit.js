@@ -9,7 +9,9 @@ const INDEX_NAME = "nginx-log"
 
 const pdpPattern = new UrlPattern('/product(/:code).html');
 
-var count = 0;
+var docCount = 0;
+var fileSuccessCount = 0;
+var fileFailedCount = 0;
 async function init(){
     try{
         var result = await client.indices.exists({
@@ -68,26 +70,31 @@ function initData(){
         });
         var documents = [ ]
         lineReader.on('line', function (line) {
-            try{
-                var doc =JSON.parse(replaceall('\\','\\\\', line))
-                if(!doc.request_uri.startsWith("/resources") && !doc.request_uri.startsWith("/Autodiscover/Autodiscover.xml")
-                   && !doc.request_uri.startsWith("/group-buying") && !doc.server_name.startsWith("overseas-offices")){
-                    if(pdpPattern.match(doc.request_uri)){
-                        doc.request_function='pdp'
-                    } else {
-                        doc.request_function='other'
+            if(line.length>3){
+                try{
+                    var doc =JSON.parse(replaceall('\\','\\\\', line))
+                    if(!doc.request_uri.startsWith("/resources") && !doc.request_uri.startsWith("/Autodiscover/Autodiscover.xml")
+                       && !doc.request_uri.startsWith("/group-buying") && !doc.server_name.startsWith("overseas-offices")){
+                        if(pdpPattern.match(doc.request_uri)){
+                            doc.request_function='pdp'
+                        } else {
+                            doc.request_function='other'
+                        }
+                        doc.requestOn=doc['@timestamp']
+                        doc.upstream_response_time=getCorrectFloat(doc.upstream_response_time) 
+                        doc.upstream_connect_time=getCorrectFloat(doc.upstream_connect_time)
+                        //doc.request_time = getCorrectFloat(doc.request_time)
+                        doc.request_url=doc.request_method+'-'+doc.server_name + doc.request_uri
+                        documents.push({ index: { _index: INDEX_NAME, _type: '_doc' } })
+                        documents.push(doc)
+                        if(Number.isNaN(parseFloat(doc.request_time))){
+                            console.log(doc.request_time)
+                        }
+                        docCount++;
                     }
-                    doc.requestOn=doc['@timestamp']
-                    doc.upstream_response_time=getCorrectFloat(doc.upstream_response_time) 
-                    doc.upstream_connect_time=getCorrectFloat(doc.upstream_connect_time)
-                    doc.request_time = getCorrectFloat(doc.request_time)
-                    doc.request_url=doc.request_method+'-'+doc.server_name + doc.request_uri
-                    documents.push({ index: { _index: INDEX_NAME, _type: '_doc' } })
-                    documents.push(doc);
-                    count++;
+                } catch (error){
+                    console.error(error) 
                 }
-            } catch (error){
-                console.error(`Failed to parse line json: ${line}` )
             }
         });
         lineReader.on('close', () => {         
@@ -103,7 +110,8 @@ async function bulk(documents,file) {
             body: documents
         })
         if (result.statusCode==200) {
-            console.log(`-------------Finished bulk ${file} successfully: total documents: ${count}---------------------`)
+            fileSuccessCount ++
+            console.log(`-------------Finished bulk ${file} successfully: total documents: ${docCount}  total finished files: ${fileSuccessCount}---------------------`)
             fs.unlinkSync(path.join(__dirname, 'data/nginx/access',file))
         }else{
             console.log('-----------------bulk response begins------------------')
@@ -111,30 +119,24 @@ async function bulk(documents,file) {
             console.log('-----------------bulk response ends------------------')        
         }
     }catch(error){
-        console.error(`Failed to bulk bulk ${file}------------`)
+        fileFailedCount++
+        console.error(`Failed to bulk bulk ${file} with error:-----------${error}`)
     }
 }
   
 function getCorrectFloat(str){//https://docs.nginx.com/nginx/admin-guide/monitoring/logging/
-    if(Number.isNaN(str)){
-        if(str==='-'){
-            str=0
-        }else if(str.split(',').length>1){
-            str = str.split(',').reduce(getSum,0.0)            
-        }else if(str.split(';').length>1){
-            str = str.split(';').reduce(getSum,0.0)
-        }
-        else if(str.split(' ').length>1){
-            str = str.split(' ').reduce(getSum,0.0)
-        }else if(Number.isNaN(str)){
-            console.log(str)
-            str = 0;
-        }
+    if(str.split(',').length>1){
+        str = str.split(',').reduce(getSum,0.0)            
+    }else if(str.split(';').length>1){
+        str = str.split(';').reduce(getSum,0.0)
+    }else if(str.split(' ').length>1){
+        str = str.split(' ').reduce(getSum,0.0)
     }
     return parseFloat(str)
 }
 function getSum(total,current){
     return parseFloat(current.trim())+total
 }
+
 module.exports = init;
 

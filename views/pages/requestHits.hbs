@@ -46,6 +46,7 @@
                         <th class="text-nowrap">请求时刻</th>
                         <th class="text-nowrap">status</th>
                         <th class="text-nowrap">refer</th>
+                        <th>http_host</th>
                         <th class="text-nowrap">后端响应时间</th>
                     </tr>
                 </thead>
@@ -56,6 +57,7 @@
                             <td class="text-nowrap" esDate="{{_source.requestOn}}"></td>
                             <td class="text-nowrap">{{_source.status}}</td>
                             <td>{{_source.http_referer}}</td>
+                            <td>{{_source.http_host}}</td>
                             <td class="text-nowrap">{{_source.upstream_response_time}}</td>
                         </tr>
                     {{/each}}

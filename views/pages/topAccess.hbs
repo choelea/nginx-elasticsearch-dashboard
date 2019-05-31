@@ -5,6 +5,11 @@
     <title>Nginx 请求次数Top 100</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">   
     <link rel="stylesheet" href="/css/common.css">  
+    <style>
+        .table td{
+            word-break: break-all;
+        }
+    </style>
 </head>
 
 <body>
@@ -23,7 +28,7 @@
                     {{#each buckets}}
                         <tr>
                             <td>{{key}}</td>
-                            <td>{{doc_count}}</td>
+                            <td class="text-nowrap" >{{doc_count}}</td>
                         </tr>
                     {{/each}}
                 </tbody>
