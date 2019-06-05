@@ -7,6 +7,7 @@ var hbs = require('hbs');
 var helpers = require('handlebars-helpers');
 var indexRouter = require('./routes/index');
 var logViewRouter = require('./routes/logView');
+var dslRouter = require('./routes/dslquery');
 const favicon = require('express-favicon');
 require('./elasticsearchInit')()
 
@@ -27,7 +28,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/log', logViewRouter)
+app.use('/log', logViewRouter);
+app.use('/dsl',dslRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

@@ -2,37 +2,39 @@
 <html>
 
 <head>
-    <title>Top 200 慢响应请求</title>
+    <title>DSL Query</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">   
-    <link rel="stylesheet" href="/css/common.css">  
-    <link rel="stylesheet" href="/css/bootstrap-timepicker.min.css">
+    <link rel="stylesheet" href="/css/common.css"> 
     <style>
         .table td{
             word-break: break-all;
         }
-
     </style>
 </head>
 
 <body>
     {{>header}}
-    <div  class="container-fluid">
-        <form class="form-inline" action="/action_page.php">
-            <div class="input-group bootstrap-timepicker timepicker">
-                <input id="timepicker1" type="text" class="form-control input-small">
-                <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+    <div class="container-fluid">
+        <form action="/dsl/simplequery" method="POST">
+            <div class="form-group">                
+                <textarea class="form-control" id="dsl" name="dsl" rows="10">{{dsl}}</textarea>
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
+            
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
         </form>
     </div>
-    <div class="container-fluid">
-        <h1>响应时间</h1> <span>Total: {{total}}</span>
+
+    <div class="container-fluid">        
         <div class="row col-md-12 table-responsive">
             <table id="customerTable" class="table">
                 <thead>
                     <tr>
-                        <th>URL</th>
+                        <th>URI</th>
+                        <!--<th>refer</th>-->
                         <th class="text-nowrap">请求时刻</th>
+                        <th class="text-nowrap">status</th>
                         <th class="text-nowrap">后端响应时间</th>
                     </tr>
                 </thead>
@@ -40,22 +42,24 @@
                     {{#each hits}}
                         <tr>
                             <td>{{_source.request_url}}</td>
-                            <td esDate="{{_source.requestOn}}" class="text-nowrap"></td>
-                            <td>{{_source.upstream_response_time}}</td>
+                            <!--<td>{{_source.http_referer}}</td>-->
+                            <td class="text-nowrap" esDate="{{_source.requestOn}}"></td>
+                            <td class="text-nowrap">{{_source.status}}</td>
+                            <td class="text-nowrap">{{_source.upstream_response_time}}</td>
                         </tr>
                     {{/each}}
                 </tbody>
             </table>
         </div>
     </div>
+
     <script  src="https://code.jquery.com/jquery-3.3.1.min.js"  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="/js/bootstrap-timepicker.min.js"></script>
+    
     <script>
         $(document).ready(function(){
             $('td[esDate]').each(function () {
                 $(this).text(new Date($(this).attr('esDate')).toLocaleString());
             })
-            $('#timepicker1').timepicker();
         });
     </script>
 </body>

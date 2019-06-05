@@ -28,7 +28,7 @@ async function init(){
                     "mappings" : { 
                         '_doc' : {
                             "properties" : {
-                                "@timestamp": { "type" : "date" },
+                                "@timestamp": { "type" : "date"},
                                 "requestOn":{"type":"date"},
                                 "http_host": { "type" : "keyword" },
                                 "remote_addr": { "type" : "keyword" },

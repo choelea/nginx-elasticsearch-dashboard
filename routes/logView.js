@@ -21,10 +21,10 @@ router.get('/topRequest', async function (req, res, next) {
 router.get('/topSlowResponse', async function (req, res, next) {
   const dsl = {
     "sort" : [
-          { "upstream_response_time" : {"order" : "desc"}}
-      ],
-      "size":10000,
-      "query": { "match_all": {}}    
+        { "upstream_response_time" : {"order" : "desc"}}
+    ],
+    "size":1000,
+    "query": { "match_all": {}}    
   }
   const result  = await es.search(dsl)
   // res.render('pages/topSlowResponse', {hits:removeDuplicated(result.hits.hits)});
