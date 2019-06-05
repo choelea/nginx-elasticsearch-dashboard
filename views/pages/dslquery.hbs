@@ -26,7 +26,10 @@
         </form>
     </div>
 
-    <div class="container-fluid">        
+    <div class="container-fluid">
+        <span>Total: {{hits.total}}</span>
+    </div>
+    <div class="container-fluid">         
         <div class="row col-md-12 table-responsive">
             <table id="customerTable" class="table">
                 <thead>
@@ -39,7 +42,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{#each hits}}
+                    {{#each hits.hits}}
                         <tr>
                             <td>{{_source.request_url}}</td>
                             <!--<td>{{_source.http_referer}}</td>-->

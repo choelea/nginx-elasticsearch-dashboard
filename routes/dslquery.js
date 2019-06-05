@@ -10,7 +10,7 @@ router.get('/simplequery', function (req, res, next) {
 router.post('/simplequery', async function (req, res, next) {
   const dsl = req.body.dsl
   const result  = await es.search(dsl);
-  res.render('pages/dslquery',{hits:result.hits.hits,dsl});
+  res.render('pages/dslquery',{hits:result.hits,dsl});
 });
 
 module.exports = router;
