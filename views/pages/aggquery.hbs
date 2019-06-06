@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DSL Query</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">   
+    <link rel="stylesheet" href="/css/common.css"> 
+    <style>
+        .table td{
+            word-break: break-all;
+        }
+        .table .agent{
+            width: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    {{>header}}
+    <div class="container-fluid">
+        <form action="/dsl/aggquery" method="POST">
+            <div class="form-group">                
+                <textarea class="form-control" id="dsl" name="dsl" rows="10">{{dsl}}</textarea>
+            </div>
+            
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="container-fluid">
+        <span>agg: {{agg}}</span>
+    </div>
+    <div class="container-fluid">         
+        <div class="row col-md-12 table-responsive">
+            <table id="customerTable" class="table">
+                <thead>
+                    <tr>
+                        <th>URI</th>
+                        <th>refer</th>
+                        <th class="col-md-2">agent</th>
+                        <th class="text-nowrap">请求时刻</th>
+                        <th class="text-nowrap">status</th>
+                        <th class="text-nowrap">后端响应时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each hits.hits}}
+                        <tr>
+                            <td>{{_source.request_url}}</td>
+                            <td>{{_source.http_referer}}</td>
+                            <td class="agent">{{_source.user_agent}}</td>
+                            <td class="text-nowrap" esDate="{{_source.requestOn}}"></td>
+                            <td class="text-nowrap">{{_source.status}}</td>
+                            <td class="text-nowrap">{{_source.upstream_response_time}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script  src="https://code.jquery.com/jquery-3.3.1.min.js"  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    
+    <script>
+        $(document).ready(function(){
+            $('td[esDate]').each(function () {
+                $(this).text(new Date($(this).attr('esDate')).toLocaleString());
+            })
+        });
+    </script>
+</body>
+
+</html>

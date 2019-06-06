@@ -3,17 +3,12 @@ const client = new Client({ node: 'http://localhost:9200' })
 const INDEX_NAME = "nginx-log"
 
 async function search(query) {
-    try{
-        const {body} = await client.search({
-            index: INDEX_NAME,
-            type:'_doc',
-            body:query
-        })        
-        return body
-    } catch (error) {
-        console.error(error);
-        return {}
-    }
+    const {body} = await client.search({
+        index: INDEX_NAME,
+        type:'_doc',
+        body:query
+    })        
+    return body
 }
 
 async function bulk(documents) {

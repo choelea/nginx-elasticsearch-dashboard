@@ -6,7 +6,6 @@ const UrlPattern = require('url-pattern');
 const { Client } = require('@elastic/elasticsearch')
 const client = new Client({ node: 'http://localhost:9200' })
 const INDEX_NAME = "nginx-log"
-
 const pdpPattern = new UrlPattern('/product(/:code).html');
 
 var docCount = 0;
