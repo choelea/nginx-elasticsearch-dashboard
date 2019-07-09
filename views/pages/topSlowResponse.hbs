@@ -33,6 +33,7 @@
                     <tr>
                         <th>URL</th>
                         <th class="text-nowrap">请求时刻</th>
+                        <th class="text-nowrap">IP</th>
                         <th class="text-nowrap">后端响应时间</th>
                     </tr>
                 </thead>
@@ -41,6 +42,7 @@
                         <tr>
                             <td>{{_source.request_url}}</td>
                             <td esDate="{{_source.requestOn}}" class="text-nowrap"></td>
+                            <td>{{_source.remote_addr}}</td>
                             <td>{{_source.upstream_response_time}}</td>
                         </tr>
                     {{/each}}

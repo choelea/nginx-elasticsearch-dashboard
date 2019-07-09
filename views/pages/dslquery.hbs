@@ -5,14 +5,6 @@
     <title>DSL Query</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">   
     <link rel="stylesheet" href="/css/common.css"> 
-    <style>
-        .table td{
-            word-break: break-all;
-        }
-        .table .agent{
-            width: 10px;
-        }
-    </style>
 </head>
 
 <body>
@@ -38,7 +30,7 @@
                 <thead>
                     <tr>
                         <th>URI</th>
-                        <th>refer</th>
+                        <th>remote_addr</th>
                         <th class="col-md-2">agent</th>
                         <th class="text-nowrap">请求时刻</th>
                         <th class="text-nowrap">status</th>
@@ -49,7 +41,7 @@
                     {{#each hits.hits}}
                         <tr>
                             <td>{{_source.request_url}}</td>
-                            <td>{{_source.http_referer}}</td>
+                            <td>{{_source.remote_addr}}</td>
                             <td class="agent">{{_source.user_agent}}</td>
                             <td class="text-nowrap" esDate="{{_source.requestOn}}"></td>
                             <td class="text-nowrap">{{_source.status}}</td>

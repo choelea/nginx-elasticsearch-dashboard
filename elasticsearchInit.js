@@ -22,7 +22,8 @@ async function init(){
                 index:INDEX_NAME,
                 body:{
                     "settings" : {
-                        "number_of_shards" : 3
+                        "number_of_shards" : 1,
+                        "number_of_replicas":0
                     },
                     "mappings" : { 
                         '_doc' : {
@@ -57,18 +58,18 @@ async function init(){
     };
 }
 
-function initData(){
+async function initData(){
     console.log(`Started init data into [${INDEX_NAME}]`)
         
     var folderPath = path.join(__dirname, 'data/nginx/access')    
     var fileNames = fs.readdirSync(folderPath)
-    fileNames.forEach((file)=>{
-        
-        var lineReader = readline.createInterface({
-            input: fs.createReadStream(path.join(folderPath,file))
-        });
-        var documents = [ ]
-        lineReader.on('line', function (line) {
+
+    for(i=0;i<fileNames.length;i++){
+        var file= fileNames[i];
+        var lines = fs.readFileSync(path.join(folderPath,file), 'utf-8').split('\n').filter(Boolean);
+        var documents = [ ];
+        console.log(`starting................${file}`)
+        lines.forEach(line=>{
             if(line.length>3){
                 try{
                     var doc =JSON.parse(replaceall('\\','\\\\', line))
@@ -95,17 +96,15 @@ function initData(){
                     console.error(error) 
                 }
             }
-        });
-        lineReader.on('close', () => {         
-            bulk(documents,file)
-        });        
-    })
+        })
+        console.log(`starting................${file}....having ${documents.length} documents`)
+        await bulk(documents,file); 
+    }
 }
 
 async function bulk(documents,file) {
     try{
         const result = await client.bulk({
-            refresh: true,
             body: documents
         })
         if (result.statusCode==200) {
