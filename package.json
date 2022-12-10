@@ -10,7 +10,7 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "es6": "npm:@elastic/elasticsearch@^6.7.1",
-    "express": "~4.16.0",
+    "express": "~4.17.3",
     "express-favicon": "^2.0.1",
     "handlebars-helpers": "^0.10.0",
     "hbs": "~4.0.1",
